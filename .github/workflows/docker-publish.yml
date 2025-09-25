@@ -28,9 +28,10 @@ jobs:
         docker build -t ghcr.io/${{ github.repository }}:latest .
 
     - name: Scan Docker image with Trivy
-      uses: aquasecurity/trivy-action@v0.28.0
+      uses: aquasecurity/trivy-action@v0.33.1
       with:
         image-ref: ghcr.io/${{ github.repository }}:${{ inputs.image-tag }}
+        github-token: ${{ secrets.GHCR_PAT }}
         format: table        # or 'json' if you want machine-readable output
         exit-code: 1         # fail workflow if vulnerabilities found
         severity: CRITICAL,HIGH,MEDIUM   # only consider these severities
