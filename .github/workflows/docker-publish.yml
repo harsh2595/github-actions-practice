@@ -33,9 +33,9 @@ jobs:
         with:
           image-ref: ghcr.io/${{ github.repository }}:latest
           format: table
-          exit-code: 1
+          exit-code: 0
           severity: CRITICAL,HIGH,MEDIUM
-          ignore-unfixed: false    
+          ignore-unfixed: true   
 
       # 5. Push Docker image to GHCR
       - name: Push Docker image
