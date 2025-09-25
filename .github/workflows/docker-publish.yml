@@ -10,35 +10,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout the repo
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # 1. Checkout the repo
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # 2. Log in to GitHub Container Registry
-    - name: Log in to GHCR
-      uses: docker/login-action@v2
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GHCR_PAT }}
+      # 2. Log in to GitHub Container Registry
+      - name: Log in to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT }}
 
-    # 3. Build Docker image
-    - name: Build Docker image
-      run: |
-        docker build -t ghcr.io/${{ github.repository }}:latest .
+      # 3. Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}:latest .
 
-    - name: Scan Docker image with Trivy
-      uses: aquasecurity/trivy-action@v0.33.1
-      with:
-        image-ref: ghcr.io/${{ github.repository }}:${{ inputs.image-tag }}
-        github-token: ${{ secrets.GHCR_PAT }}
-        format: table        # or 'json' if you want machine-readable output
-        exit-code: 1         # fail workflow if vulnerabilities found
-        severity: CRITICAL,HIGH,MEDIUM   # only consider these severities
-        ignore-unfixed: false    
-    
+      # 4. Scan Docker image with Trivy
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@v0.33.1
+        with:
+          image-ref: ghcr.io/${{ github.repository }}:latest
+          format: table
+          exit-code: 1
+          severity: CRITICAL,HIGH,MEDIUM
+          ignore-unfixed: false    
 
-    # 4. Push Docker image to GHCR
-    - name: Push Docker image
-      run: |
-        docker push ghcr.io/${{ github.repository }}:latest
+      # 5. Push Docker image to GHCR
+      - name: Push Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository }}:latest
